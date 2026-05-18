@@ -526,23 +526,56 @@ canvas.addEventListener("pointerup", () => {
   watchAndAdvance(flying);
 });
 
+function triggerLatestSpecial() {
+  const list = state.world.brainrots;
+  for (let i = list.length - 1; i >= 0; i--) {
+    const b = list[i];
+    if (b.launched && !b.specialUsed && !b.dead && b.rest < 10) {
+      b.triggerSpecial(state.world);
+      return true;
+    }
+  }
+  return false;
+}
+
 window.addEventListener("keydown", e => {
   if (e.code === "Space") {
     e.preventDefault();
-    // Trigger special on most recent in-flight brainrot
-    const list = state.world.brainrots;
-    for (let i = list.length - 1; i >= 0; i--) {
-      const b = list[i];
-      if (b.launched && !b.specialUsed && !b.dead && b.rest < 10) {
-        b.triggerSpecial(state.world);
-        break;
-      }
-    }
+    triggerLatestSpecial();
   }
   if (e.key.toLowerCase() === "r") {
     loadLevel(state.levelIndex);
   }
 });
+
+const actionBtn = document.getElementById("actionBtn");
+if (actionBtn) {
+  const handleAction = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    triggerLatestSpecial();
+  };
+  actionBtn.addEventListener("pointerdown", handleAction);
+  actionBtn.addEventListener("touchstart", handleAction, { passive: false });
+  // Stop touch events on the button from bubbling into the canvas drag handler
+  actionBtn.addEventListener("pointerup", e => e.stopPropagation());
+  actionBtn.addEventListener("pointermove", e => e.stopPropagation());
+}
+
+function updateActionButtonState() {
+  if (!actionBtn || !state.world) return;
+  const list = state.world.brainrots;
+  let ready = false;
+  for (let i = list.length - 1; i >= 0; i--) {
+    const b = list[i];
+    if (b.launched && !b.specialUsed && !b.dead && b.rest < 10 && b.def.onSpecial) {
+      ready = true;
+      break;
+    }
+  }
+  actionBtn.classList.toggle("ready", ready);
+  actionBtn.classList.toggle("disabled", !ready);
+}
 
 document.getElementById("restartBtn").addEventListener("click", () => loadLevel(state.levelIndex));
 
@@ -924,6 +957,7 @@ function frame() {
 
   // Update score continuously
   document.getElementById("scoreLabel").textContent = `Score: ${state.world.score + state.totalScore}`;
+  updateActionButtonState();
 
   requestAnimationFrame(frame);
 }
