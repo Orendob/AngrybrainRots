@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Angry Brainrots</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header id="hud">
+      <div class="hud-left">
+        <span class="logo">ANGRY <span class="accent">BRAINROTS</span></span>
+        <span id="levelLabel">Level 1</span>
+      </div>
+      <div class="hud-center" id="brainrotQueue" aria-label="Next brainrots"></div>
+      <div class="hud-right">
+        <span id="scoreLabel">Score: 0</span>
+        <button id="restartBtn" title="Restart level">Restart</button>
+      </div>
+    </header>
+    <canvas id="game" width="1280" height="720"></canvas>
+    <div id="overlay" class="hidden">
+      <div class="panel">
+        <h1 id="overlayTitle">Level Complete!</h1>
+        <p id="overlaySub">Three stars unlocked.</p>
+        <div id="stars"></div>
+        <div class="row">
+          <button id="nextBtn">Next Level</button>
+          <button id="retryBtn">Retry</button>
+        </div>
+      </div>
+    </div>
+    <footer id="help">
+      <strong>Drag</strong> the brainrot in the slingshot, <strong>release</strong> to launch.
+      Press <kbd>Space</kbd> mid-air to trigger a brainrot's <em>special power</em>.
+      Knock down all the targets to clear the level.
+    </footer>
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>
